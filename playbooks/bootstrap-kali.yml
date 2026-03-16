@@ -1,0 +1,46 @@
+---
+- name: Configure Kali Linux workstation
+  hosts: kali_lab
+  become: true
+
+  vars:
+    kali_user: kali
+    kali_home: /home/kali
+    oscp_notes_repo: https://github.com/JRyanHenson/OSCP_Notes.git
+    oscp_notes_dest: /home/kali/OSCP_Notes
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - feroxbuster
+          - btop
+          - code-oss
+        state: present
+
+    - name: Ensure Kali home directory exists
+      ansible.builtin.file:
+        path: "{{ kali_home }}"
+        state: directory
+        owner: "{{ kali_user }}"
+        group: "{{ kali_user }}"
+        mode: "0755"
+
+    - name: Clone OSCP Notes into Kali home directory
+      ansible.builtin.git:
+        repo: "{{ oscp_notes_repo }}"
+        dest: "{{ oscp_notes_dest }}"
+        update: true
+      become_user: "{{ kali_user }}"
+
+    - name: Ensure OSCP Notes ownership is correct
+      ansible.builtin.file:
+        path: "{{ oscp_notes_dest }}"
+        owner: "{{ kali_user }}"
+        group: "{{ kali_user }}"
+        recurse: true
