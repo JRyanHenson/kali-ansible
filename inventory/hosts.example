@@ -1,0 +1,5 @@
+[kali_lab]
+kali ansible_host=192.168.X.X ansible_user=kali
+
+[ubuntu_lab]
+ubuntu ansible_host=192.168.X.X ansible_user=your_username ansible_ssh_common_args='-tt'

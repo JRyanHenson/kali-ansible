@@ -1,2 +1,0 @@
-[kali_lab]
-kali ansible_host=192.168.64.6 ansible_user=kali

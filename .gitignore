@@ -1,0 +1,8 @@
+# Inventory — contains internal IPs, usernames, and hostnames
+inventory/hosts
+
+# Python / Ansible cache
+__pycache__/
+*.pyc
+.ansible/
+*.retry

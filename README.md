@@ -1,43 +1,40 @@
-Kali Linux Baseline Automation (OSCP / CTF)
+# Linux Ansible Automation
 
-This repository contains Ansible playbooks used to baseline and configure a Kali Linux environment for OSCP preparation, CTFs, and offensive security labs.
+Ansible playbooks for provisioning and configuring Linux environments — including security labs, vulnerable app deployments, and general system setup.
 
-Purpose
+## Purpose
 
-Quickly rebuild a consistent Kali setup without manual configuration. Designed to be repeatable, fast, and aligned with offensive security workflows.
+Automate repeatable Linux configuration tasks across different distros and use cases. Built to support both offensive security lab environments (Kali) and general-purpose Linux VMs (Ubuntu, etc.).
 
-What It Does
+## Playbooks
 
-Updates and upgrades the system
+| Playbook | Target | Description |
+|---|---|---|
+| `playbooks/bootstrap-kali.yml` | `[kali_lab]` | Baseline a Kali Linux VM with tools and config for OSCP / CTF work |
+| `playbooks/setup-dvwa.yml` | `[ubuntu_lab]` | Install XAMPP and deploy the OWASP Vulnerable Web Application |
 
-Installs common offensive security tools (nmap, gobuster, metasploit, hydra, impacket, etc.)
+## Usage
 
-Sets up Python and scripting environment
+1. Copy the inventory template and fill in your hosts:
+   ```bash
+   cp inventory/hosts.example inventory/hosts
+   ```
 
-Configures user environment (aliases, directories, workflow structure)
+2. Run a playbook:
+   ```bash
+   ansible-playbook playbooks/<playbook>.yml --ask-become-pass
+   ```
 
-Optionally applies basic system hardening
+## Requirements
 
-Usage
+- Ansible installed on your control machine
+- SSH key-based auth configured to target hosts (see `ansible.cfg` for key path)
+- Target hosts reachable on the network
 
-Clone the repository
+## Inventory
 
-Update the inventory file (if needed)
+Host definitions live in `inventory/hosts` (git-ignored — see `inventory/hosts.example` for the format).
 
-Run the playbook:
-
-ansible-playbook -i inventory/hosts.ini playbooks/bootstrap-kali.yml --ask-become-pass
-
-Requirements
-
-Kali Linux
-
-Ansible
-
-Goal
-
-Spin up a fresh Kali VM and fully configure it in minutes with a consistent toolset and environment.
-
-Disclaimer
+## Disclaimer
 
 For educational use and authorized testing only.
