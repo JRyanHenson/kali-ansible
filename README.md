@@ -16,11 +16,13 @@ Automate repeatable Linux configuration tasks across different distros and use c
 ## Usage
 
 1. Copy the inventory template and fill in your hosts:
+
    ```bash
    cp inventory/hosts.example inventory/hosts
    ```
 
 2. Run a playbook:
+
    ```bash
    ansible-playbook playbooks/<playbook>.yml --ask-become-pass
    ```

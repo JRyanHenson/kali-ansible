@@ -1,0 +1,76 @@
+---
+# Playbook: setup-dvwa.yml
+# Purpose: Install a LAMP stack and deploy the OWASP Vulnerable Web Application
+# Target:  [ubuntu_lab] group in inventory/hosts
+# Note:    Uses apt-based LAMP instead of XAMPP — XAMPP has no ARM64 build.
+# Usage:   ansible-playbook playbooks/setup-dvwa.yml
+
+- name: Install LAMP stack and deploy OWASP Vulnerable Web Application
+  hosts: ubuntu_lab
+  become: true
+
+  vars:
+    web_root: /var/www/html
+    dvwa_repo: "https://github.com/OWASP/Vulnerable-Web-Application.git"
+    dvwa_dest: "{{ web_root }}/dvwa"
+
+  tasks:
+
+    # ── Prerequisites ────────────────────────────────────────────────────────
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install LAMP stack and git
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - mysql-server
+          - php
+          - libapache2-mod-php
+          - php-mysql
+          - git
+        state: present
+
+    # ── Start Services ───────────────────────────────────────────────────────
+
+    - name: Enable and start Apache
+      ansible.builtin.systemd:
+        name: apache2
+        state: started
+        enabled: true
+
+    - name: Enable and start MySQL
+      ansible.builtin.systemd:
+        name: mysql
+        state: started
+        enabled: true
+
+    # ── Deploy OWASP Vulnerable Web Application ──────────────────────────────
+
+    - name: Clone OWASP Vulnerable Web Application into web root
+      ansible.builtin.git:
+        repo: "{{ dvwa_repo }}"
+        dest: "{{ dvwa_dest }}"
+        update: true
+
+    - name: Set ownership on web app directory
+      ansible.builtin.file:
+        path: "{{ dvwa_dest }}"
+        owner: www-data
+        group: www-data
+        recurse: true
+
+    # ── Verify ───────────────────────────────────────────────────────────────
+
+    - name: Confirm Apache is responding
+      ansible.builtin.uri:
+        url: "http://localhost/dvwa"
+        status_code: [200, 301, 302]
+      retries: 3
+      delay: 5
+
+    - name: Print DVWA access URL
+      ansible.builtin.debug:
+        msg: "DVWA is available at http://{{ ansible_host }}/dvwa"
